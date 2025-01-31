@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM devbeta/glassfish:5.0.1-jdk-1.8.0_202
 
 # Set environment variables
 ENV JAVA_VERSION=1.8.0_202
@@ -15,13 +15,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
-
-# Install JDK 1.8.0_202 (Manually Download & Extract)
-RUN wget -q --no-check-certificate -c --header "Cookie: oraclelicense=accept-securebackup-cookie" \
-    https://download.oracle.com/otn-pub/java/jdk/8u202-b08/jdk-8u202-linux-x64.tar.gz -O /tmp/jdk.tar.gz && \
-    mkdir -p /usr/lib/jvm && \
-    tar -xzf /tmp/jdk.tar.gz -C /usr/lib/jvm && \
-    rm -f /tmp/jdk.tar.gz
 
 # Install Maven 3.6.0
 RUN wget -q "https://repo1.maven.org/maven2/org/apache/maven/apache-maven/3.6.0/apache-maven-3.6.0-bin.tar.gz" -O /tmp/maven.tar.gz && \
