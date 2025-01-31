@@ -1,20 +1,16 @@
 FROM maven:3.6.0-jdk-8
 
+# Ensure package lists are updated and install dependencies
+RUN echo "deb http://deb.debian.org/debian stretch main" > /etc/apt/sources.list && \
+    echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list && \
+    apt-get update && apt-get install -y --no-install-recommends \
+    gcc g++ make build-essential wget curl unzip tar bzip2 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Set working directory
 WORKDIR /usr/src/app
 
-# Install required dependencies
-RUN echo "deb http://deb.debian.org/debian stretch main" > /etc/apt/sources.list && \
-    echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list
-#RUN apt-get update
-RUN apt-get install -y wget
-RUN wget --version
-
-RUN apt-get install -y bzip2
-
-RUN apt-get install -y gcc
-
-# Download and Install GLIBC 2.27
+# Upgrade GLIBC to 2.27
 RUN wget http://ftp.gnu.org/gnu/libc/glibc-2.27.tar.gz && \
     tar -xvzf glibc-2.27.tar.gz && \
     cd glibc-2.27 && \
@@ -26,7 +22,7 @@ RUN wget http://ftp.gnu.org/gnu/libc/glibc-2.27.tar.gz && \
 # Set new GLIBC as default
 ENV LD_LIBRARY_PATH=/opt/glibc-2.27/lib:$LD_LIBRARY_PATH
 
-# Verify the GLIBC version
-RUN ldd --version
+# Verify installations
+RUN mvn -version && gcc --version && make --version && ldd --version
 
 CMD ["mvn", "-version"]
