@@ -1,4 +1,4 @@
-FROM openjdk:8u202-jdk
+FROM amazoncorretto:8
 
 # Install Maven 3.6.0
 RUN apt-get update && apt-get install -y wget && \
