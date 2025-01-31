@@ -8,7 +8,7 @@ ENV MAVEN_HOME=/usr/share/maven
 ENV PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH"
 
 # Install dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get install -y --no-install-recommends \
     wget \
     curl \
     tar \
