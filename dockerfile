@@ -9,8 +9,6 @@ RUN wget --version
 
 RUN apt-get install -y bzip2
 
-RUN apt-get install -y build-essential
-
 # Download and Install GLIBC 2.27
 RUN wget http://ftp.gnu.org/gnu/libc/glibc-2.27.tar.gz && \
     tar -xvzf glibc-2.27.tar.gz && \
