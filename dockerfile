@@ -4,6 +4,7 @@ FROM maven:3.6.0-jdk-8
 WORKDIR /usr/src/app
 
 # Install required dependencies
+RUN apt-get update
 RUN apt-get install -y wget
 RUN wget --version
 
