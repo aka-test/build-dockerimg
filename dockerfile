@@ -1,28 +1,27 @@
-FROM maven:3.6.0-jdk-8
+FROM openjdk:8-jdk
 
-# Ensure package lists are updated and install dependencies
-RUN echo "deb http://deb.debian.org/debian stretch main" > /etc/apt/sources.list && \
-    echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list && \
-    apt-get update && apt-get install -y --no-install-recommends \
-    gcc g++ make build-essential wget curl unzip tar bzip2 \
+# Set environment variables
+ENV MAVEN_VERSION=3.6.0
+ENV MAVEN_HOME=/usr/share/maven
+ENV PATH="$MAVEN_HOME/bin:$PATH"
+
+# Install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    bzip2 \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+# Download and install Maven 3.6.0
+RUN wget -q "https://repo1.maven.org/maven2/org/apache/maven/apache-maven/3.6.0/apache-maven-3.6.0-bin.tar.gz" -O /tmp/maven.tar.gz && \
+    mkdir -p "$MAVEN_HOME" && \
+    tar -xvzf /tmp/maven.tar.gz --strip-components=1 -C "$MAVEN_HOME" && \
+    rm -f /tmp/maven.tar.gz
+
+# Verify installation
+RUN java -version && mvn -version
+
 # Set working directory
-WORKDIR /usr/src/app
-
-# Upgrade GLIBC to 2.27
-RUN wget http://ftp.gnu.org/gnu/libc/glibc-2.27.tar.gz && \
-    tar -xvzf glibc-2.27.tar.gz && \
-    cd glibc-2.27 && \
-    mkdir build && cd build && \
-    ../configure --prefix=/opt/glibc-2.27 && \
-    make -j$(nproc) && make install && \
-    cd ../.. && rm -rf glibc-2.27 glibc-2.27.tar.gz
-
-# Set new GLIBC as default
-ENV LD_LIBRARY_PATH=/opt/glibc-2.27/lib:$LD_LIBRARY_PATH
-
-# Verify installations
-RUN mvn -version && gcc --version && make --version && ldd --version
+WORKDIR /app
 
 CMD ["mvn", "-version"]
