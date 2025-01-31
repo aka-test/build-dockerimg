@@ -1,21 +1,27 @@
-FROM openjdk:8-jdk
+FROM maven:3.6.0-jdk-8
 
-# Install required packages
-RUN apt-get update && apt-get install -y curl tar && rm -rf /var/lib/apt/lists/*
+# Set working directory
+WORKDIR /usr/src/app
 
-# Set Maven version
-ENV MAVEN_VERSION 3.6.0
-ENV MAVEN_HOME /opt/maven
+# Install required dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    bzip2 \
+    build-essential
 
-# Download and install Maven
-RUN curl -fsSL https://repo1.maven.org/maven2/org/apache/maven/apache-maven/3.6.0/apache-maven-3.6.0-bin.tar.gz \
-    | tar -xz -C /opt && mv /opt/apache-maven-${MAVEN_VERSION} /opt/maven
+# Download and Install GLIBC 2.27
+RUN wget http://ftp.gnu.org/gnu/libc/glibc-2.27.tar.gz && \
+    tar -xvzf glibc-2.27.tar.gz && \
+    cd glibc-2.27 && \
+    mkdir build && cd build && \
+    ../configure --prefix=/opt/glibc-2.27 && \
+    make -j$(nproc) && make install && \
+    cd ../.. && rm -rf glibc-2.27 glibc-2.27.tar.gz
 
-# Set environment variables
-ENV PATH="${MAVEN_HOME}/bin:${PATH}"
+# Set new GLIBC as default
+ENV LD_LIBRARY_PATH=/opt/glibc-2.27/lib:$LD_LIBRARY_PATH
 
-# Verify installation
-RUN java -version && mvn -version
+# Verify the GLIBC version
+RUN ldd --version
 
-WORKDIR /app
-CMD ["mvn", "--version"]
+CMD ["mvn", "-version"]
