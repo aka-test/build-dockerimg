@@ -4,10 +4,12 @@ FROM maven:3.6.0-jdk-8
 WORKDIR /usr/src/app
 
 # Install required dependencies
-RUN apt-get update && apt-get install -y \
-    wget \
-    bzip2 \
-    build-essential
+RUN apt-get install -y wget
+RUN wget --version
+
+RUN apt-get install -y bzip2
+
+RUN apt-get install -y build-essential
 
 # Download and Install GLIBC 2.27
 RUN wget http://ftp.gnu.org/gnu/libc/glibc-2.27.tar.gz && \
