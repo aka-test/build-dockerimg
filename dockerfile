@@ -4,6 +4,8 @@ FROM maven:3.6.0-jdk-8
 WORKDIR /usr/src/app
 
 # Install required dependencies
+RUN echo "deb http://deb.debian.org/debian stretch main" > /etc/apt/sources.list && \
+    echo "deb http://security.debian.org/ stretch/updates main" >> /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get install -y wget
 RUN wget --version
